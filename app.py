@@ -1,11 +1,9 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict
 import pandas as pd
 import numpy as np
 import re
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestRegressor
 from scipy.stats import t
 from fuzzywuzzy import fuzz, process
@@ -13,19 +11,46 @@ import json
 import pickle
 from datetime import datetime
 import hashlib
+import os
+import requests
 
-CSV_PATH = r"C:\Users\PC\Downloads\test (2).csv"
+# =====================
+# Paths & URLs
+# =====================
+
+CSV_PATH = "test.csv"
+MODEL_PATH = "car_price_model.pkl"
+FEEDBACK_PATH = "feedback_data.json"
+
+MODEL_URL = "https://drive.google.com/uc?export=download&id=1kLCgHJ0Jm-FawLrfBqV3bcei8IATaCd7"
+
+# =====================
+# Constants
+# =====================
+
 FUZZY_THRESHOLD = 80
 MIN_SAMPLES = 2
 YEAR_DELTA = 2
 CONFIDENCE = 0.9
 MIN_MODEL_YEAR = 2010
 HYBRID_BONUS = 3000
-MODEL_PATH = "car_price_model.pkl"
-FEEDBACK_PATH = "feedback_data.json"
 
 MILEAGE_RATE_MORE_KM = 1000
 MILEAGE_RATE_LESS_KM = 700
+
+app = FastAPI(title="Vehicle Price Prediction API")
+
+# =====================
+# Utils
+# =====================
+
+def download_model():
+    if not os.path.exists(MODEL_PATH):
+        r = requests.get(MODEL_URL, stream=True)
+        with open(MODEL_PATH, "wb") as f:
+            for chunk in r.iter_content(8192):
+                if chunk:
+                    f.write(chunk)
 
 app = FastAPI(title="Vehicle Price Prediction API")
 
