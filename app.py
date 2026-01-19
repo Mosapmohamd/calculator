@@ -18,7 +18,7 @@ import requests
 # Paths & URLs
 # =====================
 
-CSV_PATH = "test2.csv"
+CSV_PATH = "test.csv"
 MODEL_PATH = "car_price_model.pkl"
 FEEDBACK_PATH = "feedback_data.json"
 
